@@ -47,8 +47,8 @@ func СalcHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 	log.Printf("Expression: %v", req)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Printf("Code: %v, Invalid request body", http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		log.Printf("Code: %v, Invalid request body", http.StatusUnprocessableEntity)
 		e := Error{Result: "invalid request body"}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)
@@ -58,8 +58,8 @@ func СalcHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(req.Expression)
 	result, err := calculator.Calc(req.Expression)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Printf("Code: %v, Error: %v", http.StatusBadRequest, err)
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		log.Printf("Code: %v, Error: %v", http.StatusUnprocessableEntity, err)
 		e := Error{Result: err.Error()}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(e)

@@ -110,31 +110,31 @@ func TestApplication(t *testing.T) {
 			name:        "wrong character",
 			expression:  []byte(`{"expression":"4 + a"}`),
 			expectedErr: ErrorResponse{Error: calculator.ErrWrongCharacter.Error()},
-			status:      http.StatusBadRequest,
+			status:      http.StatusUnprocessableEntity,
 		},
 		{
 			name:        "empty brackets",
 			expression:  []byte(`{"expression":"()"}`),
 			expectedErr: ErrorResponse{Error: calculator.ErrEmptyBrackets.Error()},
-			status:      http.StatusBadRequest,
+			status:      http.StatusUnprocessableEntity,
 		},
 		{
 			name:        "division by zero",
 			expression:  []byte(`{"expression":"2/(4 - 4)"}`),
 			expectedErr: ErrorResponse{Error: calculator.ErrDivisionByZero.Error()},
-			status:      http.StatusBadRequest,
+			status:      http.StatusUnprocessableEntity,
 		},
 		{
 			name:        "bracket is not closed",
 			expression:  []byte(`{"expression":"(4 + 2"}`),
 			expectedErr: ErrorResponse{Error: calculator.ErrNotClosedBracket.Error()},
-			status:      http.StatusBadRequest,
+			status:      http.StatusUnprocessableEntity,
 		},
 		{
 			name:        "merger operators",
 			expression:  []byte(`{"expression":"4 +* 2"}`),
 			expectedErr: ErrorResponse{Error: calculator.ErrMergedOperators.Error()},
-			status:      http.StatusBadRequest,
+			status:      http.StatusUnprocessableEntity,
 		},
 	}
 
@@ -159,8 +159,8 @@ func TestApplication(t *testing.T) {
 		if TestCase.expectedErr != actualErr {
 			t.Fatalf("Expected error: %s, but got: %s", TestCase.expectedErr, data)
 		}
-		if res.StatusCode != http.StatusBadRequest {
-			t.Fatalf("Expected status: %d, but got: %d", http.StatusBadRequest, res.StatusCode)
+		if res.StatusCode != http.StatusUnprocessableEntity {
+			t.Fatalf("Expected status: %d, but got: %d", http.StatusUnprocessableEntity, res.StatusCode)
 		}
 	}
 }
