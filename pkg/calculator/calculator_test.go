@@ -19,8 +19,8 @@ func TestCalc(t *testing.T) {
 		},
 		{
 			name:           "priority",
-			expression:     "(2+2)*2",
-			expectedResult: 8,
+			expression:     "(2+2)*2-3*(3)",
+			expectedResult: -1,
 		},
 		{
 			name:           "priority",
@@ -28,7 +28,7 @@ func TestCalc(t *testing.T) {
 			expectedResult: 6,
 		},
 		{
-			name:           "/",
+			name:           "division",
 			expression:     "1/2",
 			expectedResult: 0.5,
 		},
@@ -52,16 +52,28 @@ func TestCalc(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			name:       "simple",
+			name:       "last is operator",
 			expression: "1+1*",
 		},
 		{
-			name:       "priority",
+			name:       "two operators together",
 			expression: "2+2**2",
 		},
 		{
-			name:       "priority",
-			expression: "((2+2-*(2",
+			name:       "opened and not closed bracket",
+			expression: "(2+2",
+		},
+		{
+			name:       "division by zero",
+			expression: "4 / (2 - 2)",
+		},
+		{
+			name:       "wrong character",
+			expression: "2 + 1a",
+		},
+		{
+			name:       "no symbol between brackets",
+			expression: "(2-2)(1+3)",
 		},
 		{
 			name:       "empty",
@@ -73,7 +85,7 @@ func TestCalc(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			val, err := calculator.Calc(testCase.expression)
 			if err == nil {
-				t.Fatalf("expression %s is invalid but result  %f was obtained", testCase.expression, val)
+				t.Fatalf("expression %s is invalid but result %f was obtained", testCase.expression, val)
 			}
 		})
 	}

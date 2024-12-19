@@ -2,6 +2,7 @@ package application
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -27,11 +28,18 @@ type Response struct {
 	Result float64 `json:"result"`
 }
 
-func calcHandler(w http.ResponseWriter, r *http.Request) {
+type Error struct {
+	Result string `json:"error"`
+}
+
+func СalcHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Request: %v %v", r.Method, r.URL.Path)
 	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		log.Printf("Code: %v, Invalid request method", http.StatusMethodNotAllowed)
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		e := Error{Result: "invalid request method"}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(e)
 		return
 	}
 
@@ -39,15 +47,22 @@ func calcHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 	log.Printf("Expression: %v", req)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		log.Printf("Code: %v, Invalid request body", http.StatusBadRequest)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		e := Error{Result: "invalid request body"}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(e)
 		return
 	}
 
+	fmt.Println(req.Expression)
 	result, err := calculator.Calc(req.Expression)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		log.Printf("Code: %v, Error: %v", http.StatusBadRequest, err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		e := Error{Result: err.Error()}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(e)
 		return
 	}
 
@@ -58,7 +73,7 @@ func calcHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Application) RunServer() {
-	http.HandleFunc("/api/v1/calculate", calcHandler)
+	http.HandleFunc("/api/v1/calculate", СalcHandler)
 
 	log.Printf("Starting server on %v", port)
 	err := http.ListenAndServe(port, nil)

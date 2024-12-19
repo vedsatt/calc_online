@@ -47,9 +47,9 @@ func expressionErrors(expression string) error {
 	}
 
 	if start > end {
-		return ErrNotOpenedBracket
-	} else if end > start {
 		return ErrNotClosedBracket
+	} else if end > start {
+		return ErrNotOpenedBracket
 	}
 	if !flag {
 		return ErrNoOperators
@@ -61,7 +61,6 @@ func (s *Stack) lineToStacks(expression string) {
 	var tmp string
 	var len int = len([]rune(expression))
 
-	expression = strings.TrimSpace(expression)
 	for index, char := range expression {
 		switch {
 		case '0' <= char && char <= '9' || char == '.' || char == ',':
@@ -145,6 +144,7 @@ func priority(operator string) int {
 }
 
 func Calc(expression string) (float64, error) {
+	expression = strings.TrimSpace(expression)
 	err := expressionErrors(expression)
 	if err != nil {
 		return 0, err
