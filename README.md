@@ -1,63 +1,53 @@
 # calc_online
+## Описание
 **Это простой сервер с калькулятором, который получает POST-запрос с телом:**
-`{"expression": "выражение, которое ввёл пользователь"}`
+```
+{"expression": "выражение, которое ввёл пользователь"}
+```
 И в ответ выдает HTTP-ответ с телом:
-`{"result": "результат выражения"}`
-Код при этом будет **200**.
-**Пример:**
-Запрос пользователя:
-`curl -X POST http://127.0.0.1:8080/api/v1/calculate \
-    -H "Content-Type: application/json" \
-    -d '{"expression": "2+2"}'`
-Ответ сервера:
-`{"result":4}`
-
----
-
-**Если пользователь отправит не тот метод запроса, то получит ошибку**
-`{"error": "invalid request method"}`
-И код **405**.
-**Пример:**
-Запрос пользователя:
-`curl http://127.0.0.1:8080/api/v1/calculate`
-Ответ сервера:
-`{"error":"invalid request method"}`
-
----
-
-**Если метод запроса будет правильным, но тела запроса будет не совпадать с форматов json данных, то пользователь получит ошибку:**
-`{"error": "invalid request body"}`
-И код **422**.
-**Пример:**
-Запрос пользователя:
-`curl -X POST http://127.0.0.1:8080/api/v1/calculate \
-    -H "Content-Type: application/json" \
-    -d '2+2'`
-Ответ сервера:
-`{"error":"invalid request body"}`
-
----
-
-**При ошибках в выражении сервер ответит следующим образом:**
-`{"error": "*соответствующая ошибка*"}`
-Код будет **422**.
-**Пример:**
-Запрос пользователя:
-`curl -X POST http://127.0.0.1:8080/api/v1/calculate \
-    -H "Content-Type: application/json" \
-    -d '{"expression": "2+*2"}'`
-Ответ сервера:
-`{"error":"the two operators are next to each other"}`
-
----
-
-##### Для установки и запуска вам нужно сделать следующее:
+```
+{"result": "результат выражения"}
+```
+## Установка
 1. Выберите папку, куда хотите установить проект
 2. В консоль введите команду для клонирования репозитория: `git clone git@github.com:vedsatt/calc_online.git`
-3. Перейдите в папку проекта .../cmd
-4. Введите в терминал команду `go run cmd.go`
-5. В терминале запустите следующую команду: 
-`curl -X POST http://127.0.0.1:8080/api/v1/calculate \
-    -H "Content-Type: application/json" \
-    -d '{"expression": "`Ваше выражение`"}'`
-Готово! Вы получили ответ на свое выражение 
+3. Установите зависимости `go mod download`
+4. Включите сервер `go run cmd/cmd.go`
+6. Ввод запроса с выражением: `curl -X POST -H "Content-Type: application/json" -d "{\"expression\": \"ваше выражение\"}" http://127.0.0.1:8080/api/v1/calculate`
+## Тестирование
+**Безошибочный ввод:**
+```
+curl -X POST -H "Content-Type: application/json" -d "{\"expression\": \"2+2\"}" http://127.0.0.1:8080/api/v1/calculate
+```
+Ответ сервера:
+```
+{"result":4}
+```
+Код статуса: 200  
+**Неподдерживаемый метод запроса:**
+```
+curl http://127.0.0.1:8080/api/v1/calculate
+```
+Ответ сервера:
+```
+{"error":"invalid request method"}
+```
+Код статуса: 405  
+**Неподдерживаемое тело запроса:**
+```
+curl -X POST -H "Content-Type: application/json" -d "2+2" http://127.0.0.1:8080/api/v1/calculate
+```
+Ответ сервера:
+```
+{"error":"invalid request body"}
+```
+Код статуса: 422  
+**Ошибка в выражении:**
+```
+curl -X POST -H "Content-Type: application/json" -d "{\"expression\": \"2+*2\"}" http://127.0.0.1:8080/api/v1/calculate
+```
+Ответ сервера:
+```
+{"error":"the two operators are next to each other"}
+```
+Код статуса: 422
