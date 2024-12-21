@@ -23,7 +23,8 @@ curl -X POST -H "Content-Type: application/json" -d "{\"expression\": \"2+2\"}" 
 ```
 {"result":4}
 ```
-Код статуса: 200  
+> Код статуса: 200
+> 
 **Неподдерживаемый метод запроса:**
 ```
 curl http://127.0.0.1:8080/api/v1/calculate
@@ -32,7 +33,8 @@ curl http://127.0.0.1:8080/api/v1/calculate
 ```
 {"error":"invalid request method"}
 ```
-Код статуса: 405  
+> Код статуса: 405
+> 
 **Неподдерживаемое тело запроса:**
 ```
 curl -X POST -H "Content-Type: application/json" -d "2+2" http://127.0.0.1:8080/api/v1/calculate
@@ -41,7 +43,8 @@ curl -X POST -H "Content-Type: application/json" -d "2+2" http://127.0.0.1:8080/
 ```
 {"error":"invalid request body"}
 ```
-Код статуса: 422  
+> Код статуса: 422
+> 
 **Ошибка в выражении:**
 ```
 curl -X POST -H "Content-Type: application/json" -d "{\"expression\": \"2+*2\"}" http://127.0.0.1:8080/api/v1/calculate
@@ -50,4 +53,4 @@ curl -X POST -H "Content-Type: application/json" -d "{\"expression\": \"2+*2\"}"
 ```
 {"error":"the two operators are next to each other"}
 ```
-Код статуса: 422
+> Код статуса: 422
